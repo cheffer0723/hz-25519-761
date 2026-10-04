@@ -88,3 +88,10 @@ Two different licenses, on purpose:
 `hz-25519-761` is the precise, descriptive name: `25519` is the classical lock
 (`X25519`), `761` is the post-quantum lock (`sntrup761`). "HoldZero" is the
 informal name for the same protocol.
+
+## Acknowledgments
+
+HZ-25519-761 was designed and directed by Critical Mass Labs. The specification,
+the reference implementation, and the conformance and fuzz test suites were
+developed in collaboration with Claude (Anthropic's Claude Code), under the
+author's direction — every design decision was made and reviewed by the author.
