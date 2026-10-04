@@ -1,0 +1,29 @@
+name: Fuzz
+
+# Continuous fuzzing of the untrusted-input parsers. Runs on a schedule (so
+# testing keeps going after release) and on demand. Separate from the main CI
+# because libFuzzer needs a nightly toolchain and cargo-fuzz.
+on:
+  schedule:
+    - cron: "17 6 * * *"   # daily, 06:17 UTC
+  workflow_dispatch:
+
+jobs:
+  fuzz:
+    name: cargo-fuzz (totality)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - name: Install cargo-fuzz
+        run: cargo install cargo-fuzz --locked
+      - name: Fuzz open()
+        run: cargo fuzz run --fuzz-dir fuzz holdzero_open -- -max_total_time=180
+      - name: Fuzz the wire parser
+        run: cargo fuzz run --fuzz-dir fuzz holdzero_wire -- -max_total_time=180
+      - name: Upload any crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuzz-artifacts
+          path: fuzz/artifacts/

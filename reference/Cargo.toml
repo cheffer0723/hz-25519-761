@@ -1,0 +1,33 @@
+[package]
+name = "hz-25519-761"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+description = "Reference implementation of the HZ-25519-761 (HoldZero) hybrid messaging protocol: X25519 + sntrup761 double-lock, silent handshake, cover traffic."
+repository = "https://github.com/cheffer0723/hz-25519-761"
+readme = "../README.md"
+keywords = ["cryptography", "post-quantum", "hybrid", "messaging", "privacy"]
+categories = ["cryptography"]
+publish = false
+
+[lib]
+name = "holdzero"
+
+[dependencies]
+blake2 = "0.11.0"
+sntrup761 = "0.4.0"
+x25519-dalek = { version = "3.0.0", features = ["static_secrets"] }
+chacha20poly1305 = "0.10.1"
+subtle = "2.6.1"
+
+[dev-dependencies]
+hex = "0.4.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"

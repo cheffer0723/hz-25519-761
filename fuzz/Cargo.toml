@@ -1,0 +1,35 @@
+# Fuzz targets for the HZ-25519-761 reference implementation.
+#
+# Separate workspace on purpose: `libfuzzer-sys` needs a nightly toolchain, so
+# detaching this crate keeps a plain `cargo test`/`cargo clippy` on stable from
+# trying to build it. Run with cargo-fuzz:  cargo +nightly fuzz run holdzero_open
+[package]
+name = "hz-25519-761-fuzz"
+version = "0.0.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+holdzero = { package = "hz-25519-761", path = "../reference" }
+
+[[bin]]
+name = "holdzero_open"
+path = "fuzz_targets/holdzero_open.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "holdzero_wire"
+path = "fuzz_targets/holdzero_wire.rs"
+test = false
+doc = false
+bench = false
+
+# Detaches this crate from any parent workspace. Do not remove.
+[workspace]
