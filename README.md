@@ -8,6 +8,8 @@ indistinguishable from a decoy.
 
 Suite: `HOLDZERO-X25519-SNTRUP761-XCHACHA20POLY1305-BLAKE2B`
 
+Project home: [asymmetria.io](https://asymmetria.io)
+
 ---
 
 ## ⚠️ Status — experimental; needs public auditing to increase accountability
