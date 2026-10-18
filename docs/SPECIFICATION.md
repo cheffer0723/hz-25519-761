@@ -1,6 +1,6 @@
 # HZ-25519-761 ("HoldZero") — Protocol Specification
 
-Version 1 · 2026-10-04
+Version 1 · 2026-10-04 · §6.1, §6.2 and §11 added 2026-10-18
 
 Suite identifier: `HOLDZERO-X25519-SNTRUP761-XCHACHA20POLY1305-BLAKE2B`
 
@@ -70,6 +70,12 @@ keeps the matching secrets `r_x` and `r_pq`.
    `pq_shared` is 32 bytes.
 4. `key = COMBINE(x_shared, pq_shared, E_x, R_x, C_pq)` (§4.3).
 
+**Randomness.** `e_x` and the encapsulation randomness MUST come from a
+cryptographically secure random source. The reference implementation takes both
+as 32-byte seeds supplied by the caller (`sender_initiate`, using sntrup761's
+deterministic encapsulation), so the host application chooses the random source
+and the conformance vectors are reproducible. A caller MUST NOT reuse a seed.
+
 The sender's key-agreement message is `HybridMessage = E_x || C_pq`
 (32 + 1039 = 1071 bytes). This byte string is the **transcript** `T`.
 
@@ -137,7 +143,55 @@ First contact carries no message content:
 
 Only after confirmation does either side seal content (§5) under `key`. A party
 that does not hold `key` cannot produce a valid proof, so it receives no reply
-and no content is ever exchanged with it.
+and no content is ever exchanged with it. (§6.2 describes one deliberate,
+opt-in exception: content riding with the hello itself.)
+
+### 6.1 Bound reply (optional)
+
+A recipient often sends something back together with its proof, for example a
+fresh public key to start a message ratchet. The **bound reply** makes the
+proof cover that value too, so it cannot be swapped in transit:
+
+```
+BOUND(T, b) = T || U16BE(len(b)) || b
+```
+
+- **Recipient:** after verifying the sender's proof exactly as in step 2 above,
+  reply with `PROOF(key, ROLE_RECIPIENT, BOUND(T, b))` and send `b` alongside it.
+- **Sender:** confirm by verifying `PROOF(key, ROLE_RECIPIENT, BOUND(T, b))` for
+  the `b` it received. If it does not verify, the sender MUST keep waiting
+  (silence) rather than abandon the handshake: a forged reply must not be able
+  to cancel the real one.
+
+`b` MUST be at most 65,535 bytes. The sender's proof (step 1) is unchanged.
+
+### 6.2 Labelled secrets
+
+The handshake key is never used directly for anything outside this protocol.
+An application that needs its own secrets derives one per purpose, each with
+its own label:
+
+```
+DERIVE(key, label, context) =
+    BLAKE2b( U8(len(label)) || label || key || context )[0..32]
+```
+
+`label` is ASCII, 1 to 255 bytes; `context` is any byte string (often empty).
+Different labels give unrelated secrets, and none of them equals `key`, so a
+derived secret can never be mistaken for a handshake proof or for another
+derived secret.
+
+- **After confirmation:** both sides use `DERIVE(key, label, context)`.
+- **Before confirmation (content riding with the hello):** both sides use
+  `DERIVE(key, label, T || context)`, mixing in the hello's transcript so the
+  secret belongs to this one hello. The recipient computes it only after the
+  sender's proof has verified; if the proof fails it derives nothing.
+
+**Trade-off of riding with the hello.** Content sealed under a pre-confirmation
+secret is protected only by the recipient's long-term keys (plus the sender's
+one-time ephemeral key). It is not forward secret against a later theft of the
+recipient's long-term keys, and the sender has not yet heard from the recipient.
+An application chooses when that trade is acceptable.
 
 ## 7. Outer slot — cover traffic
 
@@ -212,8 +266,10 @@ exchange that produced it.
   standard constructions; treat them as experimental until reviewed.
 - **Nonce uniqueness is required** (see §9) — it is an implementer obligation,
   not enforced by the format.
-- **Single exchange.** This version covers one first-contact exchange and one
-  sealed message; a continuous session ratchet is future work.
+- **Single exchange.** This protocol covers one first-contact exchange and one
+  sealed message. A continuous message ratchet is left to the application, which
+  can seed it from a labelled secret (§6.2) and bind its first public key with a
+  bound reply (§6.1); §11 describes one that does.
 - **Cover traffic shapes bytes, not behaviour.** Equal-size, random-looking
   packets defeat content/length distinguishing, but a *traffic-analysis*
   adversary watching volume and timing is, again, the transport layer's problem.
@@ -236,12 +292,49 @@ exchange that produced it.
 - **Forward secrecy.** The sender's X25519 key is ephemeral per exchange; the
   recipient's keys are long-term. This specification covers a single
   first-contact exchange and one sealed message; a full session ratchet is out of
-  scope for version 1.
+  scope for version 1 (see §6.2 and §11 for how an application adds one).
+- **Pre-confirmation content** (§6.2) is not forward secret. Use it only where
+  the application has decided that trade is acceptable.
 
 ## 10. Conformance
 
 `vectors/hz-25519-761.json` pins fixed inputs and the expected `hello_wire`,
 recipient proof, and sealed packet. An implementation is conformant with respect
 to this vector when it reproduces those outputs byte for byte and opens the
-sealed packet back to the original message. The reference check is
-`reference/tests/conformance.rs`.
+sealed packet back to the original message. The vector's `bound_and_derived`
+case pins the bound reply (§6.1) and the labelled secrets (§6.2), both before
+and after confirmation, and requires that a changed binding is refused. The
+reference check is `reference/tests/conformance.rs`.
+
+## 11. In use: Dead Drop
+
+Dead Drop (an iPhone messenger, in TestFlight beta) uses this protocol for
+first contact. It is described here so reviewers can see exactly which parts it
+uses and what it builds on top. The labels below are the ones in the vector's
+`bound_and_derived` case.
+
+**Used as specified:** the hybrid key agreement (§4), the silent handshake (§6)
+with a bound reply (§6.1), and labelled secrets (§6.2). The phone's own secure
+random source supplies `e_x` and the encapsulation seed.
+
+**Not used:** the 296-byte content seal (§5) and the cover packets (§7). Dead
+Drop has its own fixed packet size and seals its notes itself, as follows.
+
+- **Every packet is exactly 1,991 bytes**, whatever it carries.
+- **Hello** (first byte 5): `0x05 || hello (1,103 bytes) || nonce (24) ||
+  XChaCha20-Poly1305(k_h, nonce, padded blob, aad = 0x05 || hello)`, where
+  `k_h = DERIVE(key, "dd-hz-hello-seal-v1", T)`, the pre-confirmation form.
+  The blob carries the sender's contact code and, only when the two people met
+  and scanned each other's code in person, a first note.
+- **Reply** (first byte 6): `0x06 || nonce (24) || XChaCha20-Poly1305(k_r,
+  nonce, padded blob, aad = 0x06)`, where `k_r = DERIVE(key,
+  "dd-hz-reply-seal-v1", T)`. The blob carries the recipient's fresh ratchet
+  public key `b` and the bound proof `PROOF(key, ROLE_RECIPIENT, BOUND(T, b))`.
+- **Every note after that** (first byte 4) rides a Double Ratchet with
+  encrypted headers (X25519, XChaCha20-Poly1305, BLAKE2b), seeded on both sides
+  from `DERIVE(key, "dd-hz-ratchet-seed-v1", "")` after confirmation, and
+  starting from the bound key `b`. Every note gets its own key.
+
+The ratchet, the 1,991-byte framing and how packets travel are Dead Drop's
+own; they are outside this specification and are not covered by its vectors.
+

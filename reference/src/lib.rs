@@ -99,6 +99,26 @@ fn combine(
     key
 }
 
+/// A secret derived from the hybrid key for one named purpose: `BLAKE2b-512`
+/// over a length-prefixed label, the key and a context, truncated. Different
+/// labels give unrelated secrets, so nothing derived here can be confused with
+/// the handshake proofs or with each other.
+pub(crate) fn derive_labelled(
+    key: &[u8; HYBRID_KEY_LEN],
+    label: &[u8],
+    context: &[u8],
+) -> [u8; HYBRID_KEY_LEN] {
+    let mut h = Blake2b512::new();
+    h.update([u8::try_from(label.len()).unwrap_or(u8::MAX)]);
+    h.update(label);
+    h.update(key);
+    h.update(context);
+    let full = h.finalize();
+    let mut out = [0u8; HYBRID_KEY_LEN];
+    out.copy_from_slice(&full[..HYBRID_KEY_LEN]);
+    out
+}
+
 /// Sender side of the hybrid key agreement. The seeds make it reproducible for
 /// tests; in production they are random.
 #[must_use]

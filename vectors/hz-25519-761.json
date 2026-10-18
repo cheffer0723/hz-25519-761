@@ -34,6 +34,30 @@
     },
     "reject": {
       "note": "Flip any byte of expected.hello_wire; recipient_accept_hello MUST reject it (return nothing). The sealed packet of any case, opened under a wrong key, MUST also return nothing."
+    },
+    "bound_and_derived": {
+      "note": "Same inputs and hello as the main vector. The recipient answers with a proof that also covers `binding` (the bound reply, SPECIFICATION §6.1), and both sides derive labelled secrets (§6.2). The labels are the ones Dead Drop uses. Changing the binding by one byte MUST make the sender's confirm_bound fail.",
+      "binding": "6666666666666666666666666666666666666666666666666666666666666666",
+      "bound_recipient_proof": "e48ae85374d3e1e4a2566894565749c5376a2c03133332eb32fa96da4c3b9c24",
+      "hello_derived": [
+        {
+          "label_utf8": "dd-hz-hello-seal-v1",
+          "context": "",
+          "secret": "6a3b8cc3dd22a46708915102c5bb68adb668bbf59ad2d6f641a6af1a0006a9c9"
+        },
+        {
+          "label_utf8": "dd-hz-reply-seal-v1",
+          "context": "",
+          "secret": "bfdc682395001ac09d08c4c4c61360cdd433d832663b5292ef04d5a93c130e2c"
+        }
+      ],
+      "session_derived": [
+        {
+          "label_utf8": "dd-hz-ratchet-seed-v1",
+          "context": "",
+          "secret": "564a65de786a19630c2d5baad691756e51d6447f317a1bdafe6deff83255da7a"
+        }
+      ]
     }
   }
 }

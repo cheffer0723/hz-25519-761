@@ -5,14 +5,17 @@
 //! `hello_wire`, the recipient proof, and the sealed packet, plus the round-trip
 //! open. It then checks the edge and negative cases: an empty message, a
 //! maximum-length message, a pinned cover packet, and that a tampered handshake
-//! and a wrong-key open are both rejected.
+//! and a wrong-key open are both rejected. A second test pins the bound reply
+//! and the labelled secrets (specification §6.1 and §6.2).
 //!
 //! Any change to the key derivation, the handshake proof, the framing, or the
 //! seal breaks this test loudly — that is the point. Regenerate the vector only
 //! by deliberate decision, not to make a red test pass.
 
 use holdzero::deception::cover_packet;
-use holdzero::protocol::{recipient_accept_hello, sender_hello};
+use holdzero::protocol::{
+    hello_derive, recipient_accept_hello, recipient_accept_hello_bound, sender_hello,
+};
 use serde::Deserialize;
 use sntrup761::generate_key_from_seed;
 use x25519_dalek::{PublicKey, StaticSecret};
@@ -48,6 +51,22 @@ struct Cases {
     empty_message: SealCase,
     max_message: SealCase,
     cover: CoverCase,
+    bound_and_derived: BoundCase,
+}
+
+#[derive(Deserialize)]
+struct BoundCase {
+    binding: String,
+    bound_recipient_proof: String,
+    hello_derived: Vec<DerivedCase>,
+    session_derived: Vec<DerivedCase>,
+}
+
+#[derive(Deserialize)]
+struct DerivedCase {
+    label_utf8: String,
+    context: String,
+    secret: String,
 }
 
 #[derive(Deserialize)]
@@ -170,4 +189,67 @@ fn matches_the_frozen_vectors() {
         None,
         "a corrupted packet must not open"
     );
+}
+
+#[test]
+fn matches_the_bound_and_derived_vectors() {
+    let v: Vector = serde_json::from_str(VECTOR).unwrap();
+    let case = &v.cases.bound_and_derived;
+
+    let x_recipient_secret = bytes32(&v.inputs.x_recipient_secret);
+    let x_recipient_public = *PublicKey::from(&StaticSecret::from(x_recipient_secret)).as_bytes();
+    let (pq_public, pq_secret) = generate_key_from_seed(bytes32(&v.inputs.pq_keygen_seed));
+    let (hello, pending) = sender_hello(
+        &x_recipient_public,
+        &pq_public,
+        bytes32(&v.inputs.x_ephemeral_secret),
+        bytes32(&v.inputs.pq_encaps_seed),
+    );
+
+    // --- Secrets derived from the hello, before any reply -------------------
+    for d in &case.hello_derived {
+        let context = hex::decode(&d.context).unwrap();
+        let sender_side = pending.derive(d.label_utf8.as_bytes(), &context);
+        let recipient_side = hello_derive(
+            &x_recipient_secret,
+            &pq_secret,
+            &hello,
+            d.label_utf8.as_bytes(),
+            &context,
+        )
+        .expect("recipient derives");
+        assert_eq!(hex::encode(sender_side), d.secret, "hello secret drifted");
+        assert_eq!(sender_side, recipient_side, "both sides must agree");
+    }
+
+    // --- The bound reply ----------------------------------------------------
+    let binding = hex::decode(&case.binding).unwrap();
+    let (proof, bob) =
+        recipient_accept_hello_bound(&x_recipient_secret, &pq_secret, &hello, &binding)
+            .expect("recipient accepts");
+    assert_eq!(
+        hex::encode(proof),
+        case.bound_recipient_proof,
+        "bound proof drifted"
+    );
+
+    // A swapped binding is refused, and the sender keeps waiting for the real reply.
+    let mut swapped = binding.clone();
+    swapped[0] ^= 0xFF;
+    let pending = pending
+        .confirm_bound(&swapped, &proof)
+        .err()
+        .expect("a swapped binding must be refused");
+    let alice = pending
+        .confirm_bound(&binding, &proof)
+        .ok()
+        .expect("the real reply still confirms");
+
+    // --- Secrets derived from the confirmed session -------------------------
+    for d in &case.session_derived {
+        let context = hex::decode(&d.context).unwrap();
+        let a = alice.derive(d.label_utf8.as_bytes(), &context);
+        assert_eq!(hex::encode(a), d.secret, "session secret drifted");
+        assert_eq!(a, bob.derive(d.label_utf8.as_bytes(), &context));
+    }
 }

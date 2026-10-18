@@ -49,6 +49,14 @@ It secures the *content and the handshake*. It does **not** hide transport-level
 metadata — your IP address and the timing of your connection are the transport
 layer's job (for example, a mixnet), not this protocol's.
 
+## In use
+
+[Dead Drop](https://asymmetria.io), an iPhone messenger in TestFlight beta,
+uses this protocol for first contact: the hybrid key, the silent handshake with
+a bound reply, and labelled secrets that seed its message ratchet. It uses its
+own 1,991-byte packets instead of the 296-byte seal and cover packets.
+Specification §11 lists exactly which parts it uses and how.
+
 ## Layout
 
 ```
