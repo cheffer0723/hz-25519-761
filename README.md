@@ -100,9 +100,9 @@ author's direction — every design decision was made and reviewed by the author
 
 ## Why this method?
 
-if you just do one brief and fast google searches for NIST standards, and why that "Gold standard" of cryptography 
+If you just do one brief and fast google searches for NIST standards, and why that "Gold standard" of cryptography 
 is riddled with vulnerabilities. And this is data that is publicly available and known. How many Zero Day exploits 
-are there files away on servers in Virginia for a rainy day? Why TOR? Simply the pipework delivery that is needed 
+are there filed away on servers in Virginia for a rainy day? Why TOR? Simply the pipework delivery that is needed 
 for actual real start to finish- 
 
 1. The relays can't see your address
@@ -111,13 +111,13 @@ for actual real start to finish-
 
 3. Your trips can't be linked together
 
-4. Your internet provider can't tell who you talk to, (nor can the secret aerver rack that ALL providers put a few MS faster
+4. Your internet provider can't tell who you talk to, (nor can the secret server rack that ALL providers put a few ms faster
 than that website you typed the address into the bar thinking you were being served). 
 
 5. It's proven and open. Tor has been attacked by experts for over 20 years (plus, built by spies, for spies to use. it's in interest of spies
 to keep secrets hidden by this method)
 
-6.It's built into the app. People don't install a separate Tor app. 
+6. It's built into the app. People don't install a separate Tor app. 
 
 ## Please feel free to test as much of this for vulnerabilities as you humanly and or "agentically" can here ——-> vectors/hz-25519-761.json
 
@@ -132,7 +132,7 @@ and the app all do what they should.
 
 -370 app tests (TypeScript, 40 test files) in scripts folder. (plain English naming)
 
--47 core-engine tests (Rust, 13 files) in modules/<engine>/rust/ package.json file: 47 commands like: npm run test:vault 
+-47 core-engine tests (Rust, 13 files) in modules/<engine>/rust/. Run commands, like npm run test:vault, are listed in package.json.
 
 **All of these testing locations are in the Dead Drop private repo**  
 
@@ -146,7 +146,7 @@ Too bad, so sad. You can build a better version.
 
 ## Long overdue.
 
-++Frog in pot theory?++
+**Frog in pot theory?**
 
 ## It will seem too inconvenient to just begin. This is by design. 
 
@@ -173,7 +173,7 @@ Too bad, so sad. You can build a better version.
 ## This is the UNITED STATES of AMERICA. 
 
 
-**There will always be MORE slaves, then there are Masters, we have been trained for this to stay INVISIBLE to YOU and ME**
+**There will always be MORE slaves, than there are Masters, we have been trained for this to stay INVISIBLE to YOU and ME**
 
 ## Does this language, or final statements Anger you to be asked Questions like these? 
 
@@ -186,5 +186,5 @@ Too bad, so sad. You can build a better version.
 
 **Why?**
 
-++That is yours to answer. Will you?++
+**That is yours to answer. Will you?**
 
