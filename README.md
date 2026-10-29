@@ -100,91 +100,86 @@ author's direction — every design decision was made and reviewed by the author
 
 ## Why this method?
 
-If you just do one brief and fast google searches for NIST standards, and why that "Gold standard" of cryptography 
-is riddled with vulnerabilities. And this is data that is publicly available and known. How many Zero Day exploits 
-are there filed away on servers in Virginia for a rainy day? Why TOR? Simply the pipework delivery that is needed 
-for actual real start to finish- 
+Do one quick Google search on NIST standards and why that "gold standard" of
+cryptography is riddled with vulnerabilities. This is publicly available, known
+information. How many zero-day exploits are filed away on servers in Virginia
+for a rainy day?
 
-1. The relays can't see your address
+### Why Tor?
 
-2. No server of our own to attack or subpoena
+Tor is the pipework that carries a message from start to finish:
 
-3. Your trips can't be linked together
+1. **The relays can't see your address.**
+2. **There is no server of our own to attack or subpoena.**
+3. **Your trips can't be linked together.**
+4. **Your internet provider can't tell who you talk to** — nor can the secret
+   server rack that every provider puts a few milliseconds ahead of the website
+   you typed into the address bar, thinking you were being served.
+5. **It's proven and open.** Tor has been attacked by experts for over 20 years.
+   It was built by spies, for spies, and it is in their interest to keep secrets
+   hidden this way.
+6. **It's built into the app.** People don't install a separate Tor app.
 
-4. Your internet provider can't tell who you talk to, (nor can the secret server rack that ALL providers put a few ms faster
-than that website you typed the address into the bar thinking you were being served). 
+## Test it
 
-5. It's proven and open. Tor has been attacked by experts for over 20 years (plus, built by spies, for spies to use. it's in interest of spies
-to keep secrets hidden by this method)
+Please test this for vulnerabilities as much as you humanly — or agentically —
+can. Start with the conformance vectors in
+[`vectors/hz-25519-761.json`](vectors/hz-25519-761.json).
 
-6. It's built into the app. People don't install a separate Tor app. 
+## Testing
 
-## Please feel free to test as much of this for vulnerabilities as you humanly and or "agentically" can here ——-> vectors/hz-25519-761.json
+**For everyday users:** Dead Drop is checked by 417 automatic tests that make
+sure the encryption, the network and the app all do what they should.
 
-## Testing 
+**For professional cryptographers:**
 
-**To normal users**
+- **370 app tests** (TypeScript, 40 test files) in the `scripts` folder, each
+  named in plain English.
+- **47 core-engine tests** (Rust, 13 files) in `modules/<engine>/rust/`. The
+  commands that run them, such as `npm run test:vault`, are listed in
+  `package.json`.
 
--Dead Drop is checked by 417 automatic tests that make sure the encryption, the network 
-and the app all do what they should.
+All of these tests live in the private Dead Drop repository.
 
-**The professional cryptographer**
+**Think the intellectual property should be visible too?** Too bad, so sad. You
+can build a better version.
 
--370 app tests (TypeScript, 40 test files) in scripts folder. (plain English naming)
+**So… why haven't you?**
 
--47 core-engine tests (Rust, 13 files) in modules/<engine>/rust/. Run commands, like npm run test:vault, are listed in package.json.
+---
 
-**All of these testing locations are in the Dead Drop private repo**  
+## A word from the author
 
-**What?**
+**Long overdue.**
 
- **Think intellectual property should be visible too?**
+Frog in the pot? It will seem too inconvenient to just begin. That is by design.
 
-Too bad, so sad. You can build a better version. 
+Priceless is the individuality of my children.<br>
+Priceless will be the individuality of their children.<br>
+Priceless is **your** individuality.
 
-**So………Why haven't you?**
+**Important: the breaking of our will started decades ago.**
 
-## Long overdue.
+Will you join me?
 
-**Frog in pot theory?**
+---
 
-## It will seem too inconvenient to just begin. This is by design. 
+Take a stand. This is **your** God damned nation. This is the **United States of
+America**.
 
+There will always be **more** slaves than there are masters. We have been
+trained for this to stay **invisible** to you and me.
 
-## Priceless, is the individuality of my children. 
+Does this language, or do these final statements, anger you? Does being asked
+questions like these?
 
+**An apology up front: this is hard to ponder.**
 
-## Priceless, will be the individuality of their children.
-
-## Priceless is YOUR individuality. 
-
-**IMPORTANT- The breaking of our will started decades ago**
-
-## Will you join me?
-.
-.
-.
-. 
-.
-.
-## Take a STAND. This is YOUR God Damned nation. 
-
-
-## This is the UNITED STATES of AMERICA. 
-
-
-**There will always be MORE slaves, than there are Masters, we have been trained for this to stay INVISIBLE to YOU and ME**
-
-## Does this language, or final statements Anger you to be asked Questions like these? 
-
-
-## Apology up front
-
-**This is hard to ponder**
-
--If these “Philosophical Questions” about our children piss you off to be asked them,  or does asking yourselves these hard questions, internally make you feel less than? This is actually a watchable and measurable occurrence nowadays- to witness children start school these days, and light is visibly leaving each of them more and more every year they age.
+If these philosophical questions about our children anger you, or if asking
+yourself these hard questions makes you feel less than, notice that. It is
+watchable and measurable now: children start school, and the light visibly
+leaves them a little more with every year they age.
 
 **Why?**
 
-**That is yours to answer. Will you?**
-
+That is yours to answer. **Will you?**
