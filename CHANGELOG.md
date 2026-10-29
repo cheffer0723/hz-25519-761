@@ -25,10 +25,10 @@ Initial public release — **experimental; needs public auditing to increase acc
   run on a daily schedule via CI (`.github/workflows/fuzz.yml`).
 
 
-## [0.1.0] - 2026-10-29 finish edit README @ 21:32:26 UTC
+## [0.1.1] - 2026-10-29 (README edit finished 21:32:26 UTC)
 
 ### Added
- - Added some depth towards the end with some serious inner style questions for a user to ask his or herself maybe during inner dialogue at first. How do these questions or statements make your feel deep inside? These type of “HARDER to ask one of your fellow human beings” Questions. You know the type.
+ - Added some depth towards the end with some serious inner style questions for a user to ask his or herself maybe during inner dialogue at first. How do these questions or statements make you feel deep inside? These type of “HARDER to ask one of your fellow human beings” Questions. You know the type.
    
  - How does each question make you, Right now as you, (like much of us) try your best to get to your next day off.
    
