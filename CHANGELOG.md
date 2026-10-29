@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project aims to
 follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-10-29
+
+### Added
+- `AUTHOR.md`: "A word from the author", moved out of the README into its own
+  file. The README links to it.
+- README: sources for the claims in "Why this method?" (Dual_EC_DRBG, the NSA's
+  role in the post-quantum selection, the NSA QUANTUM servers and AT&T's Room
+  641A), and a note that none of HoldZero's building blocks is a NIST design.
+
 ## [0.1.1] - 2026-10-29
 
 ### Added
