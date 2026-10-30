@@ -1,7 +1,11 @@
 # Contributing
 
-Thanks for looking. This is an experimental cryptography project, so review,
-criticism, and independent implementations are especially welcome.
+Thanks for looking. This is an, “experimental” or a better word is maybe “Novel” cryptography project that is used in an active iOS native application Called “Dead Drop - Hold Zero” and is live and available for download using the public link that can be shared and passed with others that you trust. link to public TestFlight download of the beta app version is here -  
+https://testflight.apple.com/join/KZcgDpPF
+
+## Important Distinction 
+
+**The cryptological primitives used are not experimental. These are well known standards. What is in need of testing from the public surface is the method and means Hold Zero uses established cryptography primitives. So please, if you feel the drive to maybe test your skill and break/attack something, make sure to criticize annd explain anny success in the open or privately, your call. Crowd level participation and collab welcomes independent implementation in private test lab you use for threat level style work, pitch an idea to the admins and or throw it up in the discussion area. Experiments are especially interesting and welcomed. 
 
 ## Ground rules
 
