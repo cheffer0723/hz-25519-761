@@ -10,6 +10,37 @@ Suite: `HOLDZERO-X25519-SNTRUP761-XCHACHA20POLY1305-BLAKE2B`
 
 Project home: [asymmetria.io](https://asymmetria.io)
 
+## At a glance
+
+**What it is.** A first-contact handshake and message seal for private
+messaging. A message stays secret unless *both* a classical and a post-quantum
+lock are broken.
+
+**What it is built from.** Nothing new at the bottom. `X25519` (classical) and
+`sntrup761` (post-quantum) are the same pairing OpenSSH has used for its
+default key exchange since version 9.0 (April 2022), plus `XChaCha20-Poly1305`
+and `BLAKE2b`. What is new, and what needs checking, is how they are put
+together: the silent handshake and the cover traffic.
+
+**Check it yourself, one command** (needs [Rust](https://rustup.rs)):
+
+```bash
+git clone https://github.com/cheffer0723/hz-25519-761 && cd hz-25519-761 && cargo test --manifest-path reference/Cargo.toml
+```
+
+That runs the frozen conformance vectors, the tamper and wrong-key cases,
+and the protocol behaviour tests (12 tests; all pass as of 2026-11-01).
+
+**Please try to break it.** That is what this repository is for.
+
+- Found a way to read, forge, or tell a decoy from a real packet? Report it
+  privately: **Security** tab → **Report a vulnerability**
+  ([how](SECURITY.md)). You will be credited.
+- Spec unclear, a test missing, or a design objection? Open an
+  [issue](https://github.com/cheffer0723/hz-25519-761/issues).
+- Start with the [specification](docs/SPECIFICATION.md) and the
+  [conformance vectors](vectors/hz-25519-761.json).
+
 ---
 
 ## ⚠️ Status — experimental; needs public auditing to increase accountability
