@@ -46,6 +46,6 @@ Initial public release — **experimental; needs public auditing to increase acc
 - Security analysis in the specification (threat model, rationale, known
   limitations).
 - `TESTING.md` describing what is tested, what is deliberately out of scope, and
-  what is planned (formal analysis, external audit).
+  what is planned (formal analysis).
 - libFuzzer totality targets for the delivered-packet and wire parsers (`fuzz/`),
   run on a daily schedule via CI (`.github/workflows/fuzz.yml`).

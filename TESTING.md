@@ -22,8 +22,6 @@ framing, the cover layer). Testing is aimed there.
 - **Formal protocol analysis** (e.g. a Tamarin/ProVerif model of the handshake).
   This is the right next step for a novel composition and is **planned**, not yet
   done.
-- **Independent / third-party audit.** Not yet done — public review is invited;
-  see [`SECURITY.md`](SECURITY.md).
 
 ## Running it
 
